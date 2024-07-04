@@ -1,0 +1,32 @@
+# Имя workflow
+name: Node.js App test
+
+# Триггеры
+on: [push, pull_request] # триггерится при пуше и пулл реквесте
+
+# Стратегия запуска
+#uses: ubuntu-20/ubuntu-18-x86_64 @ Ubuntu 20.04 and windows-10/windows-10-x86_64 @ Windows 10
+jobs:
+# Описываем джобу
+job: ubuntu-20
+  runs-on:ubuntu-20
+  steps:
+  # Checkout the code and run tests
+  - name: Checkout code
+    uses: actions/checkout@v4
+  - name: Run tests
+    uses: actions/run-tests@v2
+    inputs:
+      test-options:
+        tests: ["**/*test*.js"]
+#run-name: w10
+  runs-on: windows-10
+  steps:
+  # Чекаут и тесты
+  - name: Checkout code
+    uses: actions/checkout@v4
+  - name: Run tests
+    uses: actions/run-tests@v1
+    inputs:
+      test-options:
+        tests: ["**/*test*.js"] 
