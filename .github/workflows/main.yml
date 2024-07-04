@@ -1,32 +1,40 @@
-# Имя workflow
-name: Node.js App test
+name: Node.js CI
 
-# Триггеры
-on: [push, pull_request] # триггерится при пуше и пулл реквесте
+# Триггеры для запуска воркфлоу
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
-# Стратегия запуска
-#uses: ubuntu-20/ubuntu-18-x86_64 @ Ubuntu 20.04 and windows-10/windows-10-x86_64 @ Windows 10
+# Определение задачи
 jobs:
-# Описываем джобу
-job: ubuntu-20
-  runs-on:ubuntu-20
-  steps:
-  # Checkout the code and run tests
-  - name: Checkout code
-    uses: actions/checkout@v4
-  - name: Run tests
-    uses: actions/run-tests@v2
-    inputs:
-      test-options:
-        tests: ["**/*test*.js"]
-#run-name: w10
-  runs-on: windows-10
-  steps:
-  # Чекаут и тесты
-  - name: Checkout code
-    uses: actions/checkout@v4
-  - name: Run tests
-    uses: actions/run-tests@v1
-    inputs:
-      test-options:
-        tests: ["**/*test*.js"] 
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node-version: [15, 16, 20]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Create project configuration
+      run: npm init -y
+
+    - name: Create index.js file
+      run: echo 'console.log("Я почти изучил Git в Merion!")' > index.js
+
+    - name: Run tests
+      run: npm test
